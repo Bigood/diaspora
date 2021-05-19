@@ -251,6 +251,8 @@ Rails.application.routes.draw do
 
     patch "user" => "users#update"
     get "user" => "users#show"
+    get "users" => "users#all"
+    
     resources :users, only: %i[show] do
       get :contacts
       get :photos

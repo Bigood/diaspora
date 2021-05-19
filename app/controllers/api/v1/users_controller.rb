@@ -5,7 +5,7 @@ module Api
     class UsersController < Api::V1::BaseController
       include TagsHelper
 
-      before_action except: %i[contacts update show] do
+      before_action except: %i[contacts update show all] do
         require_access_token %w[public:read]
       end
 
@@ -27,6 +27,27 @@ module Api
 
       rescue_from ActiveRecord::RecordNotFound do
         render_error 404, "User not found"
+      end
+
+      def all
+        # persons = Person.all 
+        # render json: persons
+        # users = User.all 
+        # render json: users
+        # profiles = Profile.find
+        # profiles.map do |profile|
+        #   profile.attributes.merge({ 
+          #     email_payment: profile.payments.last.email,
+          #     created_at_payment: profile.payments.last.created_at
+          #   })
+          # end
+        # profiles = Person.joins(:profile).select('profiles.full_name')
+        users = []
+        Person.find_each do |person|
+          users.push(PersonPresenter.new(person))
+        end
+        render json: users
+        # render json: PersonPresenter.new(persons).profile_hash_as_api_json
       end
 
       def show
