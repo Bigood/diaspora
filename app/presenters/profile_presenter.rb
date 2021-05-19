@@ -67,7 +67,14 @@ class ProfilePresenter < BasePresenter
       birthday: birthday.try(:iso8601),
       gender:   gender,
       location: location_message.plain_text_for_json,
-      bio:      bio_message.plain_text_for_json
+      bio:      bio_message.plain_text_for_json,
+      carto_latitude: carto_latitude,
+      carto_longitude: carto_longitude,
+      carto_etablissement: carto_etablissement,
+      carto_user_type: carto_user_type,
+      carto_technics: carto_technics,
+      carto_activites: carto_activites,
+      carto_methods: carto_methods,
     }
   end
 end

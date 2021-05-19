@@ -30,24 +30,11 @@ module Api
       end
 
       def all
-        # persons = Person.all 
-        # render json: persons
-        # users = User.all 
-        # render json: users
-        # profiles = Profile.find
-        # profiles.map do |profile|
-        #   profile.attributes.merge({ 
-          #     email_payment: profile.payments.last.email,
-          #     created_at_payment: profile.payments.last.created_at
-          #   })
-          # end
-        # profiles = Person.joins(:profile).select('profiles.full_name')
         users = []
         Person.find_each do |person|
-          users.push(PersonPresenter.new(person))
+          users.push(PersonPresenter.new(person).carto_as_json)
         end
         render json: users
-        # render json: PersonPresenter.new(persons).profile_hash_as_api_json
       end
 
       def show
@@ -138,7 +125,8 @@ module Api
         raise RuntimeError if params.has_key?(:id)
 
         updates = params.permit(:bio, :birthday, :gender, :location, :name,
-                                :searchable, :show_profile_info, :nsfw, :tags).to_h || {}
+                                :searchable, :show_profile_info, :nsfw, :tags,
+                                :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods).to_h || {}
         if updates.has_key?(:name)
           updates[:first_name] = updates[:name]
           updates[:last_name] = nil

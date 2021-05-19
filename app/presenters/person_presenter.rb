@@ -46,6 +46,10 @@ class PersonPresenter < BasePresenter
     full_hash_with_profile
   end
 
+  def carto_as_json(_options={})
+    full_profile
+  end
+
   def hovercard
     base_hash_with_contact.merge(profile: ProfilePresenter.new(profile).for_hovercard)
   end
@@ -130,8 +134,15 @@ class PersonPresenter < BasePresenter
     attrs
   end
 
+  def full_profile
+    attrs = full_hash
+    attrs.merge!(profile: ProfilePresenter.new(profile).as_other_api_json(true))
+
+    attrs
+  end
+
   def contact_hash
-    ContactPresenter.new(current_user_person_contact).full_hash
+    ContactPresenter.new(current_user_person_contact).as_other_api_json(true)
   end
 
   private
