@@ -15,6 +15,7 @@ gem "unicorn-worker-killer", "0.4.5"
 
 # Federation
 
+gem "diaspora_federation", github: "bigood/diaspora_federation", branch: "develop"
 gem "diaspora_federation-json_schema", "0.2.6"
 gem "diaspora_federation-rails", "0.2.6"
 
