@@ -33,6 +33,19 @@ class Profile < ApplicationRecord
   before_validation do
     self.tag_string = self.tag_string.split[0..4].join(' ')
     self.build_tags
+    logger.debug "Avant : carto_latitude : #{self[:carto_latitude]} carto_longitude : #{self[:carto_longitude]}"
+    logger.debug "Avant : carto_latitude : #{self[:carto_latitude].to_f} carto_longitude : #{self[:carto_longitude].to_f}"
+    #Cast string in float if needed (incoming data from federation are string, cause XML encoder doesn't support floats. yay)
+    if self[:carto_latitude].instance_of? String
+      write_attribute(:carto_latitude, self[:carto_latitude].to_f)
+      self.carto_latitude = self[:carto_latitude].to_f
+      # self[:carto_latitude] = self[:carto_latitude].to_f
+    end
+    if self[:carto_longitude].instance_of? String
+      write_attribute(:carto_longitude, self[:carto_longitude].to_f)
+      self.carto_longitude = self[:carto_longitude].to_f
+      # self[:carto_longitude] = self[:carto_longitude].to_f
+    end
   end
 
   before_save do
