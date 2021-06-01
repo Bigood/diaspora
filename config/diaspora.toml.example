@@ -32,6 +32,9 @@
 ## will be hardcoded into the database.
 #url = "https://example.org/"
 
+## URL de l'instance Cartotalents associée
+url_cartotalents = "http://exemple.cartotalents.local/"
+
 ## Set the bundle of certificate authorities (CA) certificates.
 ## This is specific to your operating system.
 ## Examples (uncomment the relevant one or add your own):

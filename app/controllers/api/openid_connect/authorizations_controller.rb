@@ -218,7 +218,14 @@ module Api
 
       def handle_prompt_none
         if params[:prompt] == "none"
-          if user_signed_in?
+          # If it's the linked cartotalent which calls, process as ok
+          if Api::OpenidConnect::Authorization.trust_client_cartotalents?(params[:client_id])
+            #Sign in the user, with the email passed in resource param from cartotalents
+            user = User.find_for_authentication(email: params[:resource])
+            #https://stackoverflow.com/a/44747266/1437016
+            sign_in(user)
+            process_authorization_consent("true")
+          elsif user_signed_in?
             handle_prompt_with_signed_in_user
           else
             handle_params_error("login_required", "User must already be logged in when `prompt` is `none`")

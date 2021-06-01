@@ -73,7 +73,24 @@ module Api
       def create_id_token
         IdToken.new(self, nonce)
       end
-
+      # CARTO : always trust incoming request from associated instance ; bypass authorization consent
+      def self.trust_client_cartotalents?(client_id)
+        app = Api::OpenidConnect::OAuthApplication.where(client_id: client_id).to_a[0]
+        # Associated instance of cartotalent, compared to the oauth app called
+        logger.debug app
+        logger.debug AppConfig.environment.url_cartotalents.get
+        
+        logger.debug app[:redirect_uris].is_a?(Array)
+        #https://ruby-doc.org/core-2.0.0/string.html#method-i-any-3F
+        #https://stackoverflow.com/a/15642794/1437016
+        isCartotalentsClient = app[:redirect_uris].is_a?(Array) ? app[:redirect_uris].any? { |redirect_uri| 
+          logger.debug redirect_uri
+          #https://ruby-doc.org/core-3.0.1/String.html#method-i-match-3F
+          redirect_uri.match?(AppConfig.environment.url_cartotalents.get) 
+        } : app[:redirect_uris].match?(AppConfig.environment.url_cartotalents.get) 
+        logger.debug isCartotalentsClient
+        return isCartotalentsClient;
+      end
       def self.find_by_client_id_user_and_scopes(client_id, user, scopes)
         app = Api::OpenidConnect::OAuthApplication.where(client_id: client_id)
         authorizations = where(o_auth_application: app, user: user).all
