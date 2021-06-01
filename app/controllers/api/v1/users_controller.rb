@@ -4,8 +4,11 @@ module Api
   module V1
     class UsersController < Api::V1::BaseController
       include TagsHelper
+      
+      # For account creation, skip CSRF token
+      skip_before_action :verify_authenticity_token
 
-      before_action except: %i[contacts update show all] do
+      before_action except: %i[contacts update show all create] do
         require_access_token %w[public:read]
       end
 
@@ -39,14 +42,42 @@ module Api
 
       def show
         person = if params.has_key?(:id)
-                   found_person = Person.find_by!(guid: params[:id])
-                   raise ActiveRecord::RecordNotFound unless found_person.searchable || access_token?("contacts:read")
+          found_person = Person.find_by!(guid: params[:id])
+          raise ActiveRecord::RecordNotFound unless found_person.searchable || access_token?("contacts:read")
 
-                   found_person
-                 else
-                   current_user.person
-                 end
+          found_person
+        else
+          current_user.person
+        end
         render json: PersonPresenter.new(person, current_user).profile_hash_as_api_json
+      end
+
+      def create
+        # ActionController::Parameters.permit_all_parameters
+        # params_to_update = ActionController::Parameters.new(params)
+        signup_params = params.permit(:email, :username, :password, :password_confirmation).to_h || {}
+        # log.debug params
+        # Create user and person
+        user = User.build(signup_params)
+        
+        # profile = params[:profile]
+        # profile_entity = user.person.profile ||= Profile.new
+
+        # # fill or update profile
+        # profile_entity.first_name = profile[:first_name]
+        # profile_entity.last_name = profile[:last_name]
+        # profile_entity.image_url = profile[:image_url]
+        # profile_entity.image_url_medium = profile[:image_url_medium]
+        # profile_entity.image_url_small = profile[:image_url_small]
+        # profile_entity.searchable = profile[:searchable]
+
+        # person_entity.save!
+
+        params_to_update = profile_update_params
+        user.update_profile(params_to_update)
+
+        sign_in(user)
+        render json: user
       end
 
       def update

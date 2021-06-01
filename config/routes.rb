@@ -252,6 +252,7 @@ Rails.application.routes.draw do
     patch "user" => "users#update"
     get "user" => "users#show"
     get "users" => "users#all"
+    post "user" => "users#create"
     
     resources :users, only: %i[show] do
       get :contacts
