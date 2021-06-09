@@ -45,6 +45,25 @@ class Pod < ApplicationRecord
     def find_or_create_by(opts) # Rename this method to not override an AR method
       uri = URI.parse(opts.fetch(:url))
       port = DEFAULT_PORTS.include?(uri.port) ? nil : uri.port
+      logger.debug "Trying to create pod: #{uri.host}"
+      relay_host_whitelisted = AppConfig.environment.relay_host_whitelisted.get
+      logger.debug "URL of whitelist : #{relay_host_whitelisted}"
+      url_pod_whitelist = AppConfig.environment.url_pod_whitelist.get
+      logger.debug "Url to be fetched: #{url_pod_whitelist}"
+      # If there's a list to fetch, and if we aren't adding the relay itsef
+      if url_pod_whitelist && uri.host != relay_host_whitelisted
+        # TODO: cache this list via a worker, every hour, as the relay does
+        #https://stackoverflow.com/a/18581861/1437016
+        whitelist = JSON.load(open(url_pod_whitelist));
+        logger.debug "Whitelist: '#{whitelist}"
+        # is_whitelisted = whitelist["pods"].include?({"host": uri.host})
+        is_whitelisted = whitelist["pods"].any? { |h| h["host"] == uri.host }
+        logger.debug "Is '#{uri.host}' whitelisted: #{is_whitelisted}"
+        if(!is_whitelisted) 
+          return 
+        end
+      end
+      logger.debug "Adding whitelisted pod : '#{uri.host}'"
       find_or_initialize_by(host: uri.host, port: port).tap do |pod|
         pod.ssl ||= (uri.scheme == "https")
         pod.save
