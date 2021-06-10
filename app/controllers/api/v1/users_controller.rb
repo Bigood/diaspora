@@ -61,9 +61,7 @@ module Api
         user = User.build(signup_params)
         
         # Récupération des paramètres de profil autorisés
-        params_to_update = params.permit(:bio, :birthday, :gender, :location, :name,
-                                :searchable, :show_profile_info, :nsfw, :tags,
-                                :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods).to_h || {}
+        params_to_update = profile_update_params
 
         user.update_profile(params_to_update)
 
