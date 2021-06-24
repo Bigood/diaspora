@@ -35,6 +35,20 @@
 ## URL de l'instance Cartotalents associée
 url_cartotalents = "http://exemple.cartotalents.local/"
 
+## URL of whitelisted pods, as JSON. If set, will prevent unlisted pods to be linked.
+## Refers to the relay's static json :
+##{
+##  "pods": [
+##    {
+##      "host": "cast.cartotalents.fr"
+##    },
+##    ...
+##  ]
+##}
+#url_pod_whitelist: https://relay.cartotalents.fr/static/pod_list.json
+## URL of the relay, which should be always whitelisted as a distant pod to connect
+#relay_host_whitelisted: relay.cartotalents.fr
+
 ## Set the bundle of certificate authorities (CA) certificates.
 ## This is specific to your operating system.
 ## Examples (uncomment the relevant one or add your own):
