@@ -27,6 +27,7 @@ module Diaspora
       def dispatch
         deliver_to_services
         deliver_to_subscribers
+        deliver_to_all_remotes
       end
 
       private
@@ -61,6 +62,10 @@ module Diaspora
       end
 
       def deliver_to_remote(_people)
+        raise NotImplementedError, "This is an abstract base method. Implement in your subclass."
+      end
+
+      def deliver_to_all_remotes(_people)
         raise NotImplementedError, "This is an abstract base method. Implement in your subclass."
       end
 

@@ -59,19 +59,31 @@ module Api
         # log.debug signup_params
         # Create user and person
         user = User.build(signup_params)
+        # Replace user#sign_up, cause we don't want captcha to interfere
+        user.save
+        # User must be saved before invoking this
+        user.seed_aspects
+        sign_in(user)
         
         # Récupération des paramètres de profil autorisés
         params_to_update = profile_update_params
+        
 
-        user.update_profile(params_to_update)
-
-        sign_in(user)
-        render json: user
+        if params_to_update && user.update_profile(params_to_update)
+          #https://stackoverflow.com/questions/44746982/what-does-sign-in-of-devise-do
+          
+          # Envoi des infos quand même à tous les pods connectés via user.deliver_profile_update(), voir models/user#389
+          user.deliver_profile_update()
+          render json: user
+        else
+          render_error 422, "Failed to create user"
+        end
       end
 
       def update
         params_to_update = profile_update_params
         if params_to_update && current_user.update_profile(params_to_update)
+          # Envoi des infos à tous les pods connectés via current_user.deliver_profile_update(), voir models/user#389
           render json: PersonPresenter.new(current_user.person, current_user).profile_hash_as_api_json
         else
           render_error 422, "Failed to update the user settings"

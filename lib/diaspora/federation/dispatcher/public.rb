@@ -18,6 +18,16 @@ module Diaspora
 
           Workers::SendPublic.perform_async(sender.id, entity.to_s, targets, magic_envelope.to_xml)
         end
+        # CARTO : Delivers to all connected Pods
+        def deliver_to_all_remotes()
+          active, inactive = Pod.all().partition(&:active?)
+          logger.info "ignoring inactive pods: #{inactive.join(', ')}" if inactive.any?
+          targets = active.map {|pod| pod.url_to("/receive/public") }
+
+          return if targets.empty?
+
+          Workers::SendPublic.perform_async(sender.id, entity.to_s, targets, magic_envelope.to_xml)
+        end
 
         def target_urls(people)
           active, inactive = Pod.where(id: people.map(&:pod_id).uniq).partition(&:active?)
