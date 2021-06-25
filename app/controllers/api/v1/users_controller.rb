@@ -84,6 +84,7 @@ module Api
         params_to_update = profile_update_params
         if params_to_update && current_user.update_profile(params_to_update)
           # Envoi des infos à tous les pods connectés via current_user.deliver_profile_update(), voir models/user#389
+          current_user.deliver_profile_update()
           render json: PersonPresenter.new(current_user.person, current_user).profile_hash_as_api_json
         else
           render_error 422, "Failed to update the user settings"
