@@ -58,7 +58,7 @@ class User < ApplicationRecord
 
   delegate :guid, :public_key, :posts, :photos, :owns?, :image_url,
            :diaspora_handle, :name, :atom_url, :profile_url, :profile, :url,
-           :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods, 
+           :carto_id, :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods, 
            :first_name, :last_name, :full_name, :gender, :participations, to: :person
   delegate :id, :guid, to: :person, prefix: true
 

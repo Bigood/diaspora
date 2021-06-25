@@ -26,7 +26,7 @@ class Person < ApplicationRecord
   has_one :profile, dependent: :destroy
   delegate :last_name, :full_name, :image_url, :tag_string, :bio, :location,
            :gender, :birthday, :formatted_birthday, :tags, :searchable,
-           :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods, 
+           :carto_id, :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods, 
            :public_details?, to: :profile
   accepts_nested_attributes_for :profile
 

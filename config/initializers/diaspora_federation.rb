@@ -30,7 +30,7 @@ DiasporaFederation.configure do |config|
           links:   [
             {
               rel:  OpenIDConnect::Discovery::Provider::Issuer::REL_VALUE,
-              href: Rails.application.routes.url_helpers.root_url
+              href: Rails.application.routes.url_helpers.root_url 
             }
           ]
         )
@@ -51,12 +51,24 @@ DiasporaFederation.configure do |config|
           public_key:       person.serialized_public_key,
           searchable:       person.searchable,
           first_name:       person.profile.first_name,
-          last_name:        person.profile.last_name
+          last_name:        person.profile.last_name,
+
+          public_details:   true,
+          carto_id:         person.carto_id,
+          carto_latitude:   person.carto_latitude,
+          carto_longitude:  person.carto_longitude,
+          carto_etablissement:  person.carto_etablissement,
+          carto_user_type:  person.carto_user_type,
+          carto_technics:   person.carto_technics,
+          carto_activites:  person.carto_activites,
+          carto_methods:    person.carto_methods
         )
       end
     end
 
     on :save_person_after_webfinger do |person|
+      # log.debug "Incoming person after webfinger : #{person}"
+      # log.debug "With profile : #{person.profile}"
       # find existing person or create a new one
       person_entity = Person.find_by(diaspora_handle: person.diaspora_id) ||
         Person.new(diaspora_handle: person.diaspora_id, guid: person.guid,
@@ -72,7 +84,18 @@ DiasporaFederation.configure do |config|
       profile_entity.image_url_medium = profile.image_url_medium
       profile_entity.image_url_small = profile.image_url_small
       profile_entity.searchable = profile.searchable
-
+      profile_entity.public_details = true #profile.public_details
+      
+      profile_entity.carto_id = profile.carto_id
+      profile_entity.carto_latitude = profile.carto_latitude
+      profile_entity.carto_longitude = profile.carto_longitude
+      profile_entity.carto_etablissement = profile.carto_etablissement
+      profile_entity.carto_user_type = profile.carto_user_type
+      profile_entity.carto_technics = profile.carto_technics
+      profile_entity.carto_activites = profile.carto_activites
+      profile_entity.carto_methods = profile.carto_methods
+      # log.debug "Profile saved : #{profile_entity}"
+      # log.debug "Person saved : #{person_entity}"
       person_entity.save!
     end
 
