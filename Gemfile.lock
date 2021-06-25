@@ -1,7 +1,7 @@
 GIT
   remote: git://github.com/bigood/diaspora_federation.git
   revision: 4c7b9892f23847f2729ebc2fbca3d40bd5f682e9
-  ref: 4c7b989
+  branch: develop
   specs:
     diaspora_federation (0.2.6)
       faraday (>= 0.9.0, < 0.18.0)
