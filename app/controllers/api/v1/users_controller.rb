@@ -159,7 +159,7 @@ module Api
 
         updates = params.permit(:bio, :birthday, :gender, :location, :name,
                                 :searchable, :show_profile_info, :nsfw, :tags,
-                                :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods).to_h || {}
+                                :carto_id, :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods).to_h || {}
         if updates.has_key?(:name)
           updates[:first_name] = updates[:name]
           updates[:last_name] = nil
