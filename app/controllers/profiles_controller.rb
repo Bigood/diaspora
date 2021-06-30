@@ -79,7 +79,7 @@ class ProfilesController < ApplicationController
   def profile_params
     params.require(:profile).permit(:first_name, :last_name, :gender, :bio,
                                     :location, :searchable, :tag_string, :nsfw,
-                                    :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods, 
+                                    :carto_id, :carto_latitude, :carto_longitude, :carto_etablissement, :carto_user_type, :carto_technics, :carto_activites, :carto_methods, 
                                     :public_details, date: %i[year month day]).to_h || {}
   end
 end

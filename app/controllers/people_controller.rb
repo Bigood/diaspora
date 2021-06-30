@@ -70,23 +70,33 @@ class PeopleController < ApplicationController
     mark_corresponding_notifications_read if user_signed_in?
     @presenter = PersonPresenter.new(@person, current_user)
 
-    respond_to do |format|
-      format.all do
-        if user_signed_in?
-          @contact = current_user.contact_for(@person)
+    #If the instance is connected to a Cartotalent instance
+    url_cartotalents = AppConfig.environment.url_cartotalents.get
+    if url_cartotalents
+      #Find out the profile
+      profile = Profile.where({id: @person.id}).first
+      logger.debug profile
+      #Redirect if there's a distant ID
+      redirect_to "#{url_cartotalents}/profil/#{profile.carto_id}" if profile.carto_id
+    else
+      respond_to do |format|
+        format.all do
+          if user_signed_in?
+            @contact = current_user.contact_for(@person)
+          end
+          gon.preloads[:person] = @presenter.as_json
+          gon.preloads[:photos_count] = Photo.visible(current_user, @person).count(:all)
+          respond_with @presenter, layout: "with_header"
         end
-        gon.preloads[:person] = @presenter.as_json
-        gon.preloads[:photos_count] = Photo.visible(current_user, @person).count(:all)
-        respond_with @presenter, layout: "with_header"
-      end
 
-      format.mobile do
-        @post_type = :all
-        person_stream
-        respond_with @presenter
-      end
+        format.mobile do
+          @post_type = :all
+          person_stream
+          respond_with @presenter
+        end
 
-      format.json { render json: @presenter.as_json }
+        format.json { render json: @presenter.as_json }
+      end
     end
   end
 

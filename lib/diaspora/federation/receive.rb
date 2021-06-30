@@ -136,6 +136,7 @@ module Diaspora
             birthday:         entity.birthday,
             gender:           entity.gender,
             bio:              entity.bio,
+            carto_id:         entity.carto_id,
             carto_latitude:   entity.carto_latitude,
             carto_longitude:  entity.carto_longitude,
             carto_etablissement:  entity.carto_etablissement,

@@ -68,6 +68,7 @@ class ProfilePresenter < BasePresenter
       gender:   gender,
       location: location_message.plain_text_for_json,
       bio:      bio_message.plain_text_for_json,
+      carto_id: carto_id,
       carto_latitude: carto_latitude,
       carto_longitude: carto_longitude,
       carto_etablissement: carto_etablissement,

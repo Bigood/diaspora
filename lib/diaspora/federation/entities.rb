@@ -179,6 +179,7 @@ module Diaspora
           birthday:         profile.birthday,
           gender:           profile.gender,
           bio:              profile.bio,
+          carto_id:         profile.carto_id,
           carto_latitude:   profile.carto_latitude,
           carto_longitude:  profile.carto_longitude,
           carto_etablissement:  profile.carto_etablissement,
