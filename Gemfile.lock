@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/bigood/diaspora_federation.git
-  revision: 4c7b9892f23847f2729ebc2fbca3d40bd5f682e9
+  revision: f40c1b9cb55273e44407f0cb2f71094e57e01e7e
   branch: develop
   specs:
     diaspora_federation (0.2.6)
