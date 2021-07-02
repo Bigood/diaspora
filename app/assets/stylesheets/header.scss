@@ -1,3 +1,52 @@
+// Carto navbar
+.carto-navbar + .navbar {
+    top: 58px;
+    z-index: 100;
+}
+
+/* Override pour navbar fullwidth */
+.carto-navbar.navbar.navbar-fixed-top .navbar-brand {
+  color: #373737;
+}
+.carto-navbar .container {
+  width: 100%;
+  max-width: initial !important;
+  padding: 4px 24px;
+}
+.carto-navbar.navbar.navbar-fixed-top .navbar-nav:not(.nav-badges)>li>a {
+  font-weight: normal;
+}
+.carto-navbar li a {
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 14px !important;
+  color: #373737;
+}
+.carto-navbar .twoline a{
+  padding-bottom: 0px;
+}
+.carto-navbar .twoline a .sub{
+  font-size: 12px;
+  color: gray;
+  display: block;
+  line-height: 14px;
+}
+.carto-navbar .btn-create-account {
+  display: none;
+}
+
+.carto-navbar .navbar-nav img {
+  width: 30px;
+  height: 30px;
+  margin: -15px 15px -15px;
+}
+
+.navbar-nav:not(.nav-badges) > li > a:active, .navbar-nav:not(.nav-badges) > li > a:hover {
+  color: $brand-success;
+  text-decoration: none;
+}
+//
+
 .not-connected-menu {
   .navbar-left {
     float: left;
@@ -12,17 +61,27 @@
 .navbar.navbar-fixed-top {
   border-bottom: none;
   box-shadow: 1px 0 2px $black;
+
   a:focus { outline: 0 none; }
 
   .in {
     overflow-y: visible; // Avoid search result dropdown to be hidden
   }
 
-  .navbar-brand {
-    font-weight: bold;
-    font-size: $font-size-h3;
-    margin-left: -15px;
+    
+  .navbar-brand{
+    font-size: 18px;
+    max-width: 240px;
+
+    padding: 4px;
+    // font-family: 'Indie Flower', Helvetica;
+    // font-family: Helvetica;
+    .sub {
+      display: block;
+      font-size:14px;
+    }
   }
+
 
   .header-title {
     margin: (($navbar-height - 32px - 2 * $navbar-padding-vertical) / 2) 0;
@@ -59,7 +118,10 @@
     }
   }
 
-  .navbar-nav:not(.nav-badges) > li > a { font-weight: bold; }
+  .navbar-nav:not(.nav-badges) > li > a { 
+    font-weight: normal; 
+    color:#373737;
+  }
   .nav-badges {
     margin: 0;
 

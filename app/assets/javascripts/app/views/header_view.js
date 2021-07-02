@@ -8,7 +8,8 @@ app.views.Header = app.views.Base.extend({
 
   presenter: function() {
     return _.extend({}, this.defaultPresenter(), {
-      podname: gon.appConfig.settings.podname
+      podname: gon.appConfig.settings.podname,
+      cartotalentsUrl: gon.appConfig.settings.cartotalentsUrl,
     });
   },
 

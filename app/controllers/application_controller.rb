@@ -162,7 +162,10 @@ class ApplicationController < ActionController::Base
 
   def gon_set_appconfig
     gon.push(appConfig: {
-               settings: {podname: AppConfig.settings.pod_name},
+               settings: {
+                 podname: AppConfig.settings.pod_name,
+                 cartotalentsUrl: AppConfig.environment.url_cartotalents
+               },
                map:      {mapbox: {
                  enabled:      AppConfig.map.mapbox.enabled?,
                  access_token: AppConfig.map.mapbox.access_token,

@@ -49,7 +49,7 @@ module LayoutHelper
   end
 
   def include_color_theme(view="desktop")
-    stylesheet_link_tag "#{current_color_theme}/#{view}", media: "all"
+    stylesheet_link_tag "#{current_color_theme}/#{view}", media: "all", debug: true
   end
 
   def flash_messages

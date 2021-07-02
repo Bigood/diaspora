@@ -16,8 +16,8 @@ $gray:                   lighten($gray-base, 33.5%); // #555
 // $gray-light:             lighten($gray-base, 46.7%) // #777
 // $gray-lighter:           lighten($gray-base, 93.5%) // #eee
 
-$brand-primary: darken(#0097FF,5%) !default; // darker creation-blue
-$brand-success: #8EDE3D !default;
+$brand-primary: darken(#8b2bd8,5%) !default; // darker creation-blue
+$brand-success: #8b2bd8 !default;
 // $brand-info:            #5bc0de
 // $brand-warning:         #f0ad4e
 // $brand-danger:          #d9534f
@@ -33,7 +33,7 @@ $brand-success: #8EDE3D !default;
 // $text-color:            $gray-dark
 
 //** Global textual link color.
-$link-color: $blue !default;
+$link-color: $brand-primary !default;
 //** Link hover color set via `darken()` function.
 // $link-hover-color:      darken($link-color, 15%)
 //** Link hover decoration.
@@ -48,7 +48,7 @@ $link-color: $blue !default;
 // $font-family-serif:       Georgia, "Times New Roman", Times, serif
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
 // $font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace
-// $font-family-base:        $font-family-sans-serif
+$font-family-base: 'Open Sans', Helvetica, sans-serif;
 
 $font-size-base: 13px !default;
 // $font-size-large:         ceil(($font-size-base * 1.25)) // ~18px

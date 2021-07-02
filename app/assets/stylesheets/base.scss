@@ -1,5 +1,5 @@
 body {
-  margin-top: $navbar-height;
+  margin-top: 120px;
   padding: none;
 }
 
@@ -23,7 +23,8 @@ body {
 .page-users.action-edit,
 .page-users.action-update,
 .page-users.action-privacy_settings {
-  background-color: $main-background;
+  // background-color: $main-background;
+  background: url("https://beta.cartotalents.fr/img/geometry.png") repeat;
 }
 // scss-lint:enable SelectorFormat
 
