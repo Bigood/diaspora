@@ -66,13 +66,28 @@ class PeopleController < ApplicationController
   end
 
   # renders the persons user profile page
+  def find_by_carto_id
+    profile = Profile.where({carto_id: params[:carto_id]}).first
+    logger.debug profile
+    #Redirect if there's a distant ID
+    if profile && profile.id
+      person = Person.where({id: profile.id}).first
+      logger.debug person
+      redirect_to "/people/#{person.guid}?force=true" 
+    else
+      render :file => Rails.root.join('public', '404').to_s,
+            :format => :html, :layout => false, :status => 404
+    end
+  end
+  # renders the persons user profile page
   def show
     mark_corresponding_notifications_read if user_signed_in?
     @presenter = PersonPresenter.new(@person, current_user)
 
     #If the instance is connected to a Cartotalent instance
     url_cartotalents = AppConfig.environment.url_cartotalents.get
-    if url_cartotalents
+    
+    if url_cartotalents && !params[:force]
       #Find out the profile
       profile = Profile.where({id: @person.id}).first
       logger.debug profile

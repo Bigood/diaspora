@@ -174,8 +174,9 @@ Rails.application.routes.draw do
 
   get 'i/:id' => 'invitation_codes#show', :as => 'invite_code'
 
+  get 'people/find/:carto_id' => "people#find_by_carto_id"
   get 'people/refresh_search' => "people#refresh_search"
-  resources :people, only: %i(show index) do
+  resources :people, only: %i(show index find_by_carto_id) do
     resources :status_messages, only: %i(new create)
     resources :photos, except:  %i(new update)
     get :stream
