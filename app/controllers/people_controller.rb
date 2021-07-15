@@ -71,7 +71,7 @@ class PeopleController < ApplicationController
     logger.debug profile
     #Redirect if there's a distant ID
     if profile && profile.id
-      person = Person.where({id: profile.id}).first
+      person = Person.where({id: profile.person_id}).first
       logger.debug person
       redirect_to "/people/#{person.guid}?force=true" 
     else
@@ -89,7 +89,8 @@ class PeopleController < ApplicationController
     
     if url_cartotalents && !params[:force]
       #Find out the profile
-      profile = Profile.where({id: @person.id}).first
+      logger.debug @person
+      profile = Profile.where({person_id: @person.id}).first
       logger.debug profile
       #Redirect if there's a distant ID
       redirect_to "#{url_cartotalents}/profil/#{profile.carto_id}" if profile.carto_id
