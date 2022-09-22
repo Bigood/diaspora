@@ -44,7 +44,6 @@ DiasporaFederation.configure do |config|
           guid:             person.guid,
           nickname:         person.username,
           full_name:        "#{person.profile.first_name} #{person.profile.last_name}".strip,
-          url:              AppConfig.pod_uri,
           photo_large_url:  person.image_url,
           photo_medium_url: person.image_url(size: :thumb_medium),
           photo_small_url:  person.image_url(size: :thumb_small),
@@ -90,20 +89,22 @@ DiasporaFederation.configure do |config|
       Diaspora::Federation::Entities.related_entity(entity) if entity
     end
 
-    on :queue_public_receive do |xml, legacy=false|
-      Workers::ReceivePublic.perform_async(xml, legacy)
+    on :queue_public_receive do |xml|
+      Workers::ReceivePublic.perform_async(xml)
     end
 
-    on :queue_private_receive do |guid, xml, legacy=false|
+    on :queue_private_receive do |guid, xml|
       person = Person.find_by_guid(guid)
 
       (person.present? && person.owner_id.present?).tap do |user_found|
-        Workers::ReceivePrivate.perform_async(person.owner.id, xml, legacy) if user_found
+        Workers::ReceivePrivate.perform_async(person.owner.id, xml) if user_found
       end
     end
 
     on :receive_entity do |entity, sender, recipient_id|
-      Person.by_account_identifier(sender).pod.try(:schedule_check_if_needed)
+      sender_person = Person.by_account_identifier(sender)
+      sender_person.pod&.schedule_check_if_needed
+      Diaspora::Federation::Receive.handle_closed_recipient(sender_person, User.find(recipient_id)) if recipient_id
 
       case entity
       when DiasporaFederation::Entities::AccountDeletion

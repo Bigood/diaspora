@@ -11,7 +11,6 @@
 //= require ./publisher/poll_creator_view
 //= require ./publisher/services_view
 //= require ./publisher/uploader_view
-//= require jquery-textchange
 
 app.views.Publisher = Backbone.View.extend({
 
@@ -22,7 +21,7 @@ app.views.Publisher = Backbone.View.extend({
     "focus textarea" : "open",
     "submit form" : "createStatusMessage",
     "click #submit" : "createStatusMessage",
-    "textchange #status_message_text": "checkSubmitAvailability",
+    "input #status_message_text": "checkSubmitAvailability",
     "click #locator" : "showLocation",
     "click #poll_creator" : "togglePollCreator",
     "click #hide_location" : "destroyLocation",
@@ -51,10 +50,6 @@ app.views.Publisher = Backbone.View.extend({
     if( this.standalone ) {
       this.$(".question_mark").hide();
     }
-
-    // this has to be here, otherwise for some reason the callback for the
-    // textchange event won't be called in Backbone...
-    this.inputEl.bind("textchange", $.noop);
 
     $("body").click(function(event) {
       var $target = $(event.target);
@@ -113,6 +108,7 @@ app.views.Publisher = Backbone.View.extend({
 
     this.viewUploader = new app.views.PublisherUploader({
       el: this.$("#file-upload"),
+      dropZoneElementIds: ["publisher-textarea-wrapper"],
       publisher: this
     });
     this.viewUploader.on("change", this.checkSubmitAvailability, this);
@@ -133,10 +129,6 @@ app.views.Publisher = Backbone.View.extend({
         if (photoAttachments.length > 0) {
           new app.views.Gallery({el: photoAttachments});
         }
-      },
-
-      onChange: function() {
-        self.inputEl.trigger("textchange");
       }
     };
 
@@ -351,7 +343,7 @@ app.views.Publisher = Backbone.View.extend({
     };
 
     var previewPost = new app.views.PreviewPost({model: new app.models.Post(previewMessage)}).render().el;
-    return $("<div/>").append(previewPost).html();
+    return $("<div></div>").append(previewPost).html();
   },
 
   keyDown : function(evt) {
@@ -368,8 +360,7 @@ app.views.Publisher = Backbone.View.extend({
 
     // clear text
     this.inputEl.val("");
-    this.inputEl.trigger("keyup")
-                .trigger("keydown");
+    this.inputEl.trigger("input");
     autosize.update(this.inputEl);
 
     // remove photos
@@ -402,9 +393,6 @@ app.views.Publisher = Backbone.View.extend({
 
     // clear poll form
     this.viewPollCreator.clearInputs();
-
-    // force textchange plugin to update lastValue
-    this.inputEl.data("lastValue", "");
 
     return this;
   },
@@ -446,6 +434,7 @@ app.views.Publisher = Backbone.View.extend({
 
   checkSubmitAvailability: function() {
     if (this._submittable()) {
+      this.open();
       this.setButtonsEnabled(true);
     } else {
       this.setButtonsEnabled(false);

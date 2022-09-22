@@ -18,31 +18,23 @@ class UsersController < ApplicationController
   end
 
   def update
-    password_changed = false
-    user_data = user_params
     @user = current_user
 
-    if user_data
-      # change password
-      if params[:change_password]
-        password_changed = change_password(user_data)
-      else
-        update_user(user_data)
-      end
+    if params[:change_password] && user_password_params
+      password_changed = change_password(user_password_params)
+      return redirect_to new_user_session_path if password_changed
+    elsif user_params
+      update_user(user_params)
     end
 
-    if password_changed
-      redirect_to new_user_session_path
-    else
-      set_email_preferences
-      render :edit
-    end
+    set_email_preferences
+    render :edit
   end
 
   def update_privacy_settings
     privacy_params = params.fetch(:user).permit(:strip_exif)
 
-    if current_user.update_attributes(strip_exif: privacy_params[:strip_exif])
+    if current_user.update(strip_exif: privacy_params[:strip_exif])
       flash[:notice] = t("users.update.settings_updated")
     else
       flash[:error] = t("users.update.settings_not_updated")
@@ -130,20 +122,11 @@ class UsersController < ApplicationController
     redirect_to edit_user_path
   end
 
-  def auth_token
-    current_user.ensure_authentication_token!
-    render status: 200, json: {token: current_user.authentication_token}
-  end
-
   private
 
-  # rubocop:disable Metrics/MethodLength
   def user_params
     params.fetch(:user).permit(
       :email,
-      :current_password,
-      :password,
-      :password_confirmation,
       :language,
       :color_theme,
       :disable_mail,
@@ -152,12 +135,19 @@ class UsersController < ApplicationController
       :auto_follow_back_aspect_id,
       :getting_started,
       :post_default_public,
-      :otp_required_for_login,
-      :otp_secret,
+      :exported_photos_file,
+      :export,
       email_preferences: UserPreference::VALID_EMAIL_TYPES.map(&:to_sym)
     )
   end
-  # rubocop:enable Metrics/MethodLength
+
+  def user_password_params
+    params.fetch(:user).permit(
+      :current_password,
+      :password,
+      :password_confirmation
+    )
+  end
 
   def update_user(user_data)
     if user_data[:email_preferences]
@@ -172,13 +162,15 @@ class UsersController < ApplicationController
       change_post_default(user_data)
     elsif user_data[:color_theme]
       change_settings(user_data, "users.update.color_theme_changed", "users.update.color_theme_not_changed")
+    elsif user_data[:export] || user_data[:exported_photos_file]
+      upload_export_files(user_data)
     else
       change_settings(user_data)
     end
   end
 
-  def change_password(user_data)
-    if @user.update_with_password(user_data)
+  def change_password(password_params)
+    if @user.update_with_password(password_params)
       flash[:notice] = t("users.update.password_changed")
       true
     else
@@ -206,7 +198,7 @@ class UsersController < ApplicationController
   end
 
   def change_language(user_data)
-    if @user.update_attributes(user_data)
+    if @user.update(user_data)
       I18n.locale = @user.language
       flash.now[:notice] = t("users.update.language_changed")
     else
@@ -235,8 +227,21 @@ class UsersController < ApplicationController
     end
   end
 
+  def upload_export_files(user_data)
+    logger.info "Start importing account"
+    @user.export = user_data[:export] if user_data[:export]
+    @user.exported_photos_file = user_data[:exported_photos_file] if user_data[:exported_photos_file]
+    if @user.save
+      flash.now[:notice] = "Your account migration has been scheduled"
+    else
+      flash.now[:error] = "Your account migration could not be scheduled for the following reason:"\
+                          " #{@user.errors.full_messages}"
+    end
+    Workers::ImportUser.perform_async(@user.id)
+  end
+
   def change_settings(user_data, successful="users.update.settings_updated", error="users.update.settings_not_updated")
-    if @user.update_attributes(user_data)
+    if @user.update(user_data)
       flash.now[:notice] = t(successful)
     else
       flash.now[:error] = t(error)

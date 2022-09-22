@@ -87,8 +87,6 @@ describe ArchiveImporter::PostImporter do
             :get,
             %r{https*://old_pod\.nowhere/\.well-known/webfinger\?resource=acct:old_id@old_pod\.nowhere}
           ).to_return(status: 404, body: "", headers: {})
-          stub_request(:get, %r{https*://old_pod\.nowhere/\.well-known/host-meta})
-            .to_return(status: 404, body: "", headers: {})
 
           expect {
             instance.import
@@ -110,6 +108,35 @@ describe ArchiveImporter::PostImporter do
           photo = Photo.find_by(guid: photo_entity.guid)
           expect(photo).not_to be_nil
           expect(photo.author).to eq(new_user.person)
+        end
+      end
+    end
+
+    context "with reshare" do
+      let(:guid) { UUID.generate(:compact) }
+      let(:entity_json) { JSON.parse(<<~JSON) }
+        {
+          "entity_data" : {
+             "created_at" : "2015-10-19T13:58:16Z",
+             "guid" : "#{guid}",
+             "author" : "#{new_user.diaspora_handle}",
+             "root_author": "root_author@remote-pod.com",
+             "root_guid":   "#{UUID.generate(:compact)}"
+          },
+          "entity_type": "reshare"
+        }
+      JSON
+
+      context "with fetch problems" do
+        it "handles unfetchable root post" do
+          allow(DiasporaFederation::Federation::Fetcher).to receive(:fetch_public)
+            .and_raise(DiasporaFederation::Federation::Fetcher::NotFetchable)
+
+          expect {
+            instance.import
+          }.not_to raise_error
+
+          expect(Reshare.find_by(guid: guid)).to be_nil
         end
       end
     end
