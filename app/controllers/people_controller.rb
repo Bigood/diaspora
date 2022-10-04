@@ -15,8 +15,7 @@ class PeopleController < ApplicationController
   respond_to :json, :only => [:index, :show]
 
   rescue_from ActiveRecord::RecordNotFound do
-    render :file => Rails.root.join('public', '404').to_s,
-           :format => :html, :layout => false, :status => 404
+    render file: Rails.root.join("public/404.html").to_s, format: :html, layout: false, status: :not_found
   end
 
   rescue_from Diaspora::AccountClosed do
@@ -139,29 +138,14 @@ class PeopleController < ApplicationController
     end
   end
 
-  def retrieve_remote
-    if params[:diaspora_handle]
-      Workers::FetchWebfinger.perform_async(params[:diaspora_handle])
-      head :ok
-    else
-      head :unprocessable_entity
-    end
-  end
-
   private
 
   def find_person
     username = params[:username]
-    @person = if diaspora_id?(username)
-        Person.where({
-          diaspora_handle: username.downcase
-        }).first
-      else
-        Person.find_from_guid_or_username({
-          id: params[:id] || params[:person_id],
-          username: username
-        })
-      end
+    @person = Person.find_from_guid_or_username(
+      id:       params[:id] || params[:person_id],
+      username: username
+    )
 
     raise ActiveRecord::RecordNotFound if @person.nil?
     raise Diaspora::AccountClosed if @person.closed_account?
