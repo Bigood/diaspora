@@ -37,7 +37,7 @@ function wait_for_port() {
 
 if [ -z $DIA_NODB ] || [ ! $DIA_NODB -eq 1 ]; then
   # ----- Wait for DB -----
-  if grep -qFx "  <<: *postgresql" /diaspora/config/database.yml; then
+  if [ ! $(grep -qFx "  <<: *postgresql" /diaspora/config/database.yml) ]; then
     wait_for_port postgresql 5432
   else
     wait_for_port mysql 3306
