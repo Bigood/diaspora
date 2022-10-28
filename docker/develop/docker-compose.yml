@@ -6,6 +6,9 @@ volumes:
   # mysql_data:
   dia_data_tmp:
   dia_data_bundle:
+  dia_data_public:
+  letsencrypt:
+  certbot:
 
 services:
   diaspora:
@@ -20,6 +23,7 @@ services:
       - "${DIASPORA_ROOT}:/diaspora:rw"
       - dia_data_tmp:/diaspora/tmp
       - dia_data_bundle:/diaspora/vendor/bundle
+      - dia_data_public:/diaspora/public
     ports:
       - ${DIASPORA_DOCKER_PORT:-5000}:3000
     environment:
@@ -42,6 +46,34 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql
 
+  reverse-proxy:
+    image: nginx
+    volumes:
+      - letsencrypt:/etc/letsencrypt/:rw
+      - dia_data_public:/var/www/public
+      # Env var to NGINX conf
+      # https://github.com/docker-library/docs/tree/master/nginx#using-environment-variables-in-nginx-configuration-new-in-119
+      - ./templates:/etc/nginx/templates
+      # - certbot:/var/www/certbot:ro
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - DIASPORA_URL=${DIASPORA_URL}
+  certbot:
+    image: certbot/certbot
+    # DNS method
+    # command: certonly --manual --preferred-challenges dns -d ${DIASPORA_URL} -m mjuganaikloo@gmail.com --agree-tos --non-interactive
+    # Webroot method on nginx
+    command: certonly --webroot --webroot-path /var/www/certbot/ -d ${DIASPORA_URL} -m mjuganaikloo@gmail.com --agree-tos
+    volumes:
+      - letsencrypt:/etc/letsencrypt/:rw
+      - certbot:/var/www/certbot/:rw
+    depends_on:
+      - reverse-proxy
+    # only runs with cert profile (docker-compose --profile dev up)
+    profiles: ["cert"]
+     
 #  mysql:
 #    image: mariadb:10.2
 #    ports:
