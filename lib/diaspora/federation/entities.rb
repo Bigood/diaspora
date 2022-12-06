@@ -197,6 +197,14 @@ module Diaspora
         )
       end
 
+      def self.initiative(initiative)
+        DiasporaFederation::Entities::Initiative.new(
+          author:           initiative.author,
+          carto_id:         initiative.carto_id,
+          name:             initiative.name
+        )
+      end
+
       def self.reshare(reshare)
         DiasporaFederation::Entities::Reshare.new(
           root_author: reshare.root_diaspora_id,

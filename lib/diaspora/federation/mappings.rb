@@ -18,6 +18,7 @@ module Diaspora
         when DiasporaFederation::Entities::Photo             then :photo
         when DiasporaFederation::Entities::PollParticipation then :poll_participation
         when DiasporaFederation::Entities::Profile           then :profile
+        when DiasporaFederation::Entities::Initiative        then :initiative
         when DiasporaFederation::Entities::Reshare           then :reshare
         when DiasporaFederation::Entities::StatusMessage     then :status_message
         else not_found(federation_entity.class)
@@ -39,6 +40,7 @@ module Diaspora
         when Photo             then :photo
         when PollParticipation then :poll_participation
         when Profile           then :profile
+        when Initiative        then :initiative
         when Reshare           then :reshare
         when Retraction        then :retraction
         when ContactRetraction then :retraction

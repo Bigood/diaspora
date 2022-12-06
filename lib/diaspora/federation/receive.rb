@@ -171,6 +171,16 @@ module Diaspora
         end
       end
 
+      def self.initiative(entity, _opts)
+        author_of(entity).initiative.tap do |initiative|
+          initiative.update(
+            author:     entity.author, #pas sur
+            carto_id:   entity.carto_id,
+            name:       entity.name,
+          )
+        end
+      end
+
       def self.reshare(entity, _opts)
         author = author_of(entity)
         ignore_existing_guid(Reshare, entity.guid, author) do
