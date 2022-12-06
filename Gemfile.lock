@@ -1,22 +1,14 @@
 GIT
-  remote: git://github.com/bigood/diaspora_federation.git
-  revision: f40c1b9cb55273e44407f0cb2f71094e57e01e7e
+  remote: https://github.com/bigood/diaspora_federation.git
+  revision: 9e991d7eb581b4a53afc9a38caa6ce28bf1cdfe4
   branch: develop
   specs:
-    diaspora_federation (0.2.6)
-      faraday (>= 0.9.0, < 0.18.0)
-      faraday_middleware (>= 0.10.0, < 0.14.0)
+    diaspora_federation (1.0.1)
+      faraday (>= 1.0, < 3)
+      faraday-follow_redirects (~> 0.3)
       nokogiri (~> 1.6, >= 1.6.8)
       typhoeus (~> 1.0)
       valid (~> 1.0)
-    diaspora_federation-json_schema (0.2.6)
-    diaspora_federation-rails (0.2.6)
-      actionpack (>= 5, < 7)
-      diaspora_federation (= 0.2.6)
-    diaspora_federation-test (0.2.6)
-      diaspora_federation (= 0.2.6)
-      fabrication (~> 2.16)
-      uuid (~> 2.3, >= 2.3.8)
 
 GEM
   remote: https://rubygems.org/
@@ -229,12 +221,6 @@ GEM
     devise_lastseenable (0.0.6)
       devise
       rails (>= 3.0.4)
-    diaspora_federation (1.0.1)
-      faraday (>= 1.0, < 3)
-      faraday-follow_redirects (~> 0.3)
-      nokogiri (~> 1.6, >= 1.6.8)
-      typhoeus (~> 1.0)
-      valid (~> 1.0)
     diaspora_federation-json_schema (1.0.1)
     diaspora_federation-rails (1.0.1)
       actionpack (>= 5.2, < 8)
@@ -906,4 +892,4 @@ DEPENDENCIES
   yajl-ruby (= 1.4.3)
 
 BUNDLED WITH
-   2.3.18
+   2.3.23
