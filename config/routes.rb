@@ -255,6 +255,12 @@ Rails.application.routes.draw do
     get "users" => "users#all"
     post "user" => "users#create"
     
+    get "initiatives" => "initiatives#all"
+    get 'initiative/:carto_id' => "initiatives#find_by_id"
+    post "initiative" => "initiatives#create"
+    patch "initiative/:carto_id" => "initiatives#update"
+    delete "initiative/:carto_id" => "initiatives#delete"
+    
     resources :users, only: %i[show] do
       get :contacts
       get :photos
@@ -294,4 +300,5 @@ Rails.application.routes.draw do
 
   get ".well-known/openid-configuration", to: "api/openid_connect/discovery#configuration"
   get "manifest.json", to: "manifest#show"
+
 end
